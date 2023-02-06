@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 export const logged = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers['Authorization'];
     if (!authHeader) return res.json("No session").status(403);
     if (!authHeader) return res.json("No token").status(403);
     try {

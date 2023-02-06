@@ -4,11 +4,16 @@ import {UserModel} from "../models/user.js";
 import crypto from "crypto";
 import {registerForm} from "../views/registerForm.js";
 import {validateUser} from "../validations/AuthValidations.js";
+import bcrypt from "bcrypt"
 
 export async function login(req, res){
-    const user = await UserModel.findOne({email: req.body.email });
 
-    if(user.password === hashPassword(req.body.password)){
+    const user = await UserModel.findOne({email: req.body.email });
+    if(!user){
+        return res.send("User not find")
+    }
+
+    if(await hashPassword(req.body.password,user.password)){
         const token = jwt.sign(
             { userId: user.id , role: user.role, email:user.email },
             process.env.JWT_SECRET,
@@ -16,11 +21,23 @@ export async function login(req, res){
         );
 
         req.session.token = token;
-
+        
+        return res.json({token:req.session.token,user:user});
+    }else{
+        return res.send("Password invalid");
     }
 
-    res.json(token);
 }
+
+export async function getUser(req,res){
+
+
+
+
+
+    
+}
+
 export async function register(req, res){
     const isValidated = await validateUser(req, res);
     if (!isValidated) return;
@@ -45,9 +62,9 @@ export function getRegisterForm(req, res){
     return res.send(registerForm(req));
 }
 
-export function hashPassword(password) {
-    const sha256Hasher = crypto.createHash('sha256', process.env.JWT_SECRET);
-    return sha256Hasher.update(password).digest("hex");
+export async function hashPassword(password,hash) {
+  const verif = await bcrypt.compare(password, hash);
+  return verif
 }
 
 export async function randomUser(req, res){
