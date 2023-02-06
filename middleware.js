@@ -1,14 +1,11 @@
 import jwt from "jsonwebtoken";
 
-export function logged(req, res, next){
-    if (!req.session) res.redirect('/').status(403);
-    if (!req.session.token) res.redirect('/').status(403);
-
+export const logged = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) return res.json("No session").status(403);
+    if (!authHeader) return res.json("No token").status(403);
     try {
-        const verifToken = jwt.verify(req.session.token, process.env.JWT_SECRET);
-
-        console.log(verifToken);
-
+        const verifToken = jwt.verify(authHeader, process.env.JWT_SECRET);
         if (verifToken)
             next();
         else

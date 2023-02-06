@@ -17,10 +17,9 @@ export async function login(req, res){
 
         req.session.token = token;
 
-        return res.redirect('/dashboard');
     }
 
-    res.redirect('/');
+    res.json(token);
 }
 export async function register(req, res){
     const isValidated = await validateUser(req, res);
@@ -37,6 +36,7 @@ export function logout(req, res){
 
     return res.redirect('/');
 }
+
 export function getLoginForm(req, res){
     return res.send(fs.readFileSync("./views/loginForm.html").toString());
 }
@@ -48,4 +48,14 @@ export function getRegisterForm(req, res){
 export function hashPassword(password) {
     const sha256Hasher = crypto.createHash('sha256', process.env.JWT_SECRET);
     return sha256Hasher.update(password).digest("hex");
+}
+
+export async function randomUser(req, res){
+    const excludeEmail = req.session.token ? jwt.verify(req.session.token, process.env.JWT_SECRET).email : null;
+    const user = await UserModel.aggregate([
+        { $match: { email: { $ne: excludeEmail } } },
+        { $sample: { size: 1 } }
+      ]);
+      
+    return res.json(user[0]);
 }

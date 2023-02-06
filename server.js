@@ -6,6 +6,7 @@ import session from 'express-session';
 import dotenv from "dotenv";
 import MongoStore from 'connect-mongo';
 import mongoose from "mongoose";
+import localtunnel from "localtunnel";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const absolutePublicPath = path.join(__dirname, 'public');
@@ -30,6 +31,10 @@ mongoose.connect('mongodb://'+process.env.DB_HOST+':'+process.env.DB_PORT+'/'+pr
         useNewUrlParser: true,
         useUnifiedTopology: true }
 )
+
+localtunnel(3000, { subdomain: "your-subdomain" }, function(err, tunnel) {
+    console.log("LT running")
+  });
 
 app.listen(process.env.APP_PORT, () => {
     console.log(`Example app listening at http://${process.env.APP_HOSTNAME}:${process.env.APP_PORT}`)

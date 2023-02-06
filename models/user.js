@@ -6,6 +6,14 @@ const UserSchema = new Schema({
     lastname: String,
     email: String,
     password: String,
+    phone:String,
+    birthdate:String,
+    city:String,
+    country:String,
+    photo:String,
+    category:String,
+    isAdmin:Boolean,
+
 });
 
 export const UserModel = model("User", UserSchema);
