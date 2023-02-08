@@ -1,13 +1,16 @@
 import jwt from "jsonwebtoken";
+import {UserModel} from "./models/user.js";
 
-export const logged = (req, res, next) => {
+export const logged = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) return res.json("No Token Received");
 
     try {
         const verifToken = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
-        if (verifToken)
+        if (verifToken) {
+            req.authUser = (await UserModel.findOne({_id: verifToken.userId}));
             next();
+        }
         else
             console.log("Token invalid")
     }
@@ -18,16 +21,13 @@ export const logged = (req, res, next) => {
 
 export const checkAdmin = (req, res, next) => {
   try {
-      console.log(req);
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (decoded.isAdmin === false) {
+    if (req.authUser.isAdmin === false) {
       return res.json({
         message: 'You are not authorized to access this resource'
       });
     }
-    req.user = decoded;
+
     next();
 
   } catch (error) {

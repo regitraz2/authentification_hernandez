@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../models/user.js";
-import {hashPassword} from "../utils/utils.js";
+import {verifyPassword} from "../utils/utils.js";
 
 
 export async function login(req, res){
@@ -10,7 +10,7 @@ export async function login(req, res){
         return res.send("User not find")
     }
 
-    if(await hashPassword(req.body.password,user.password)){
+    if(await verifyPassword(req.body.password,user.password)){
         const token = jwt.sign(
             { userId: user.id , role: user.role, email:user.email },
             process.env.JWT_SECRET,

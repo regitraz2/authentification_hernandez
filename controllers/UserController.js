@@ -12,6 +12,8 @@ export async function getUser(req,res){
 }
 
 export async function updateUser(req,res){
+    if (!req.authUser.isAdmin && req.authUser.email !== req.body.email) return res.json({"message":"You are not admin"});
+
     let updateData = req.body;
 
     // Mise à jour des informations de l'utilisateur en fonction de l'id
@@ -34,7 +36,24 @@ export async function randomUser(req, res){
 }
 
 export async function addUser(req, res){
-    const result = await UserModel.insertMany({firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, password: hashPassword(req.body.password)});
+    console.log(req.authUser);
+    if (!req.authUser.isAdmin) return res.json({"message":"You are not admin"});
+
+    const result = await UserModel.insertMany(
+        {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            country: req.body.country,
+            city: req.body.city,
+            category: req.body.category,
+            gender: req.body.gender,
+            phone: req.body.phone,
+            photo: req.body.photo,
+            birthdate: req.body.birthdate,
+            isAdmin: req.body.isAdmin === '1',
+            password: hashPassword(req.body.password)
+        });
 
     if (!result)
         return res.status(500).send({"message" : "Error while registering"});

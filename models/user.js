@@ -7,13 +7,12 @@ const UserSchema = new Schema({
     email: String,
     password: String,
     phone:String,
-    birthdate:String,
+    birthdate:Date,
     city:String,
     country:String,
     photo:String,
     category:String,
     isAdmin:Boolean,
-
 });
 
 export const UserModel = model("User", UserSchema);
