@@ -38,7 +38,7 @@ export async function updateUser(req,res){
             photo: req.body.photo,
             birthdate: req.body.birthdate,
             isAdmin:req.body.isAdmin,
-            password: hashPassword(req.body.password)
+            // password: hashPassword(req.body.password)
         } });
     }
 
