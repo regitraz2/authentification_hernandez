@@ -17,11 +17,11 @@ router.get('/users/:id', getUserById);
 
 router.get('/logout', logout);
 
-router.post('/updateUser', updateUser);
+
 
 // A partir d'ici toutes les routes nécessitent d'être admin
-router.use(checkAdmin);
-
+// router.use(checkAdmin));
+router.post('/updateUser', updateUser);
 router.post('/users', addUser);
 router.delete('/users/:id', deleteUser);
 
