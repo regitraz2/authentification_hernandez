@@ -29,7 +29,6 @@ export async function login(req, res){
 }
 
 export async function getUsers(req,res){
-
     const users = await UserModel.find({});
     if(!users){
         return res.send("User not find")
@@ -40,6 +39,7 @@ export async function getUsers(req,res){
 
 export async function updateUser(req,res){
     let updateData = req.body;
+
     // Mise à jour des informations de l'utilisateur en fonction de l'id
     if(req.body){
     const result = await UserModel.updateOne({ _id: ObjectId(userId) }, { $set: updateData });
