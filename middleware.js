@@ -21,7 +21,6 @@ export const logged = async (req, res, next) => {
 
 export const checkAdmin = (req, res, next) => {
   try {
-
     if (req.authUser.isAdmin === false) {
       return res.json({
         message: 'You are not authorized to access this resource'
