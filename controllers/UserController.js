@@ -1,6 +1,6 @@
 import {UserModel} from "../models/user.js";
 import jwt from "jsonwebtoken";
-import {hashPassword} from "../utils/utils.js";
+import {hashPassword, manipulateDate} from "../utils/utils.js";
 
 export async function getUser(req,res){
     const users = await UserModel.find({});
@@ -15,10 +15,22 @@ export async function updateUser(req,res){
     if (!req.authUser.isAdmin && req.authUser.email !== req.body.email) return res.json({"message":"You are not admin"});
 
     let updateData = req.body;
-
     // Mise à jour des informations de l'utilisateur en fonction de l'id
     if(req.body){
-        const result = await UserModel.updateOne({ _id: ObjectId(userId) }, { $set: updateData });
+        const result = await UserModel.updateOne({ _id: updateData._id }, { $set: {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            country: req.body.country,
+            city: req.body.city,
+            category: req.body.category,
+            gender: req.body.gender,
+            phone: req.body.phone,
+            photo: req.body.photo,
+            birthdate: req.body.birthdate,
+            isAdmin:req.body.isAdmin,
+            password: hashPassword(req.body.password)
+        } });
     }
 
     return res.status(200).json({"message" : "Update effectuée"});
@@ -40,7 +52,6 @@ export async function deleteUser(req, res){
 }
 
 export async function addUser(req, res){
-    console.log(req.authUser);
     if (!req.authUser.isAdmin) return res.json({"message":"You are not admin"});
 
     const result = await UserModel.insertMany(
