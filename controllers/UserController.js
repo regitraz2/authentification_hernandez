@@ -34,6 +34,9 @@ export async function randomUser(req, res){
 
     return res.json(user[0]);
 }
+export async function deleteUser(req, res){
+    await UserModel.deleteOne({ _id: req.body.id });
+}
 
 export async function addUser(req, res){
     console.log(req.authUser);
