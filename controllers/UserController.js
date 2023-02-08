@@ -11,6 +11,15 @@ export async function getUser(req,res){
     return res.status(200).json(users);
 }
 
+export async function getUserById(req,res){
+    const user = await UserModel.findOne({_id:req.params.id});
+    if(!user){
+        return res.status(404).json({"message":"User not found"})
+    }
+
+    return res.status(200).json(user);
+}
+
 export async function updateUser(req,res){
     if (!req.authUser.isAdmin && req.authUser.email !== req.body.email) return res.json({"message":"You are not admin"});
 
@@ -35,7 +44,7 @@ export async function randomUser(req, res){
     return res.json(user[0]);
 }
 export async function deleteUser(req, res){
-    await UserModel.deleteOne({ _id: req.query.id });
+    await UserModel.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted" });
 }
 

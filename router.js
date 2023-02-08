@@ -1,6 +1,6 @@
 import express from "express";
 import { login, logout} from "./controllers/AuthController.js";
-import { addUser, updateUser, getUser, randomUser, deleteUser} from "./controllers/UserController.js";
+import {addUser, updateUser, getUser, randomUser, deleteUser, getUserById} from "./controllers/UserController.js";
 import {logged, checkAdmin} from "./middleware.js";
 
 const router = express.Router();
@@ -13,6 +13,7 @@ router.use(logged);
 router.get('/randomUser',randomUser);
 
 router.get('/users', getUser);
+router.get('/users/:id', getUserById);
 
 router.get('/logout', logout);
 
@@ -22,6 +23,6 @@ router.post('/updateUser', updateUser);
 router.use(checkAdmin);
 
 router.post('/users', addUser);
-router.delete('/users', deleteUser);
+router.delete('/users/:id', deleteUser);
 
 export default router;
