@@ -19,7 +19,6 @@ export async function login(req, res){
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
-
         req.session.token = token;
         
         return res.json({token:req.session.token,user:user});
@@ -29,13 +28,25 @@ export async function login(req, res){
 
 }
 
-export async function getUser(req,res){
+export async function getUsers(req,res){
 
+    const users = await UserModel.find({});
+    if(!users){
+        return res.send("User not find")
+    }
 
+    return res.json(users);
+}
 
+export async function updateUser(req,res){
+    let updateData = req.body;
+    // Mise à jour des informations de l'utilisateur en fonction de l'id
+    if(req.body){
+    const result = await UserModel.updateOne({ _id: ObjectId(userId) }, { $set: updateData });
+    }
 
+    return res.json("Update effectué");
 
-    
 }
 
 export async function register(req, res){

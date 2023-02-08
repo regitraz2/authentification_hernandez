@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 
 export const logged = (req, res, next) => {
-    const authHeader = req.headers['Authorization'];
+    const authHeader = req.headers['authorization'];
+    console.log(req.headers);
     if (!authHeader) return res.json("No session").status(403);
     if (!authHeader) return res.json("No token").status(403);
     try {
@@ -9,9 +10,9 @@ export const logged = (req, res, next) => {
         if (verifToken)
             next();
         else
-            res.redirect('/').status(403);
+            console.log("Token invalid")
     }
     catch (err) {
-        res.redirect('/').status(403);
+        console.log(err)
     }
 }

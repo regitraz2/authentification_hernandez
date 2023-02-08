@@ -1,5 +1,5 @@
 import express from "express";
-import {getLoginForm, getRegisterForm, login, register, logout, randomUser,getUser} from "./controllers/AuthController.js";
+import {getLoginForm, getRegisterForm, login, register, logout, randomUser,getUsers,updateUser} from "./controllers/AuthController.js";
 import {logged} from "./middleware.js";
 
 const router = express.Router();
@@ -10,9 +10,11 @@ router.post('/login', login);
 
  // A partir d'ici toutes les routes sont protégées
 
-router.get('/randomUser',logged,randomUser);
+router.get('/randomUser',randomUser);
 
-router.get('/users',getUser);
+router.get('/users',getUsers);
+
+router.post('/updateUser',updateUser);
 
 router.get('/logout', logout);
 // router.get('/dashboard', dashboard);
