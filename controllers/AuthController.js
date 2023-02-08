@@ -1,10 +1,7 @@
-import fs from "fs"
 import jwt from 'jsonwebtoken';
 import {UserModel} from "../models/user.js";
-import crypto from "crypto";
-import {registerForm} from "../views/registerForm.js";
-import {validateUser} from "../validations/AuthValidations.js";
-import bcrypt from "bcrypt"
+import {hashPassword} from "../utils/utils.js";
+
 
 export async function login(req, res){
 
@@ -27,63 +24,10 @@ export async function login(req, res){
     }
 
 }
-
-export async function getUsers(req,res){
-
-    const users = await UserModel.find({});
-    if(!users){
-        return res.send("User not find")
-    }
-
-    return res.json(users);
-}
-
-export async function updateUser(req,res){
-    let updateData = req.body;
-    // Mise à jour des informations de l'utilisateur en fonction de l'id
-    if(req.body){
-    const result = await UserModel.updateOne({ _id: ObjectId(userId) }, { $set: updateData });
-    }
-
-    return res.json("Update effectué");
-
-}
-
-export async function register(req, res){
-    const isValidated = await validateUser(req, res);
-    if (!isValidated) return;
-
-    const result = await UserModel.insertMany({firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, password: hashPassword(req.body.password)});
-
-    if(result)
-        return res.redirect('/');
-    return res.redirect('/register');
-}
 export function logout(req, res){
     req.session.destroy();
 
     return res.redirect('/');
 }
 
-export function getLoginForm(req, res){
-    return res.send(fs.readFileSync("./views/loginForm.html").toString());
-}
 
-export function getRegisterForm(req, res){
-    return res.send(registerForm(req));
-}
-
-export async function hashPassword(password,hash) {
-  const verif = await bcrypt.compare(password, hash);
-  return verif
-}
-
-export async function randomUser(req, res){
-    const excludeEmail = req.session.token ? jwt.verify(req.session.token, process.env.JWT_SECRET).email : null;
-    const user = await UserModel.aggregate([
-        { $match: { email: { $ne: excludeEmail } } },
-        { $sample: { size: 1 } }
-      ]);
-      
-    return res.json(user[0]);
-}
