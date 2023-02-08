@@ -1,6 +1,5 @@
 import {UserModel} from "../models/user.js";
 import jwt from "jsonwebtoken";
-import {validateUser} from "../validations/AuthValidations.js";
 import {hashPassword} from "../utils/utils.js";
 
 export async function getUser(req,res){
@@ -31,16 +30,13 @@ export async function randomUser(req, res){
         { $sample: { size: 1 } }
     ]);
 
-    return res.status(200).json(user[0]);
+    return res.json(user[0]);
 }
 
 export async function addUser(req, res){
-    const isValidated = await validateUser(req, res);
-    if (!isValidated) return;
-
     const result = await UserModel.insertMany({firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, password: hashPassword(req.body.password)});
 
     if (!result)
         return res.status(500).send({"message" : "Error while registering"});
-    return res.status(200).ajson({"message" : "User created"});
+    return res.status(200).json({"message" : "User created"});
 }

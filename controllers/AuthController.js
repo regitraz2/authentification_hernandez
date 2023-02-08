@@ -22,7 +22,6 @@ export async function login(req, res){
     }else{
         return res.send("Password invalid");
     }
-
 }
 export function logout(req, res){
     req.session.destroy();

@@ -2,11 +2,10 @@ import jwt from "jsonwebtoken";
 
 export const logged = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    console.log(req.headers);
-    if (!authHeader) return res.json("No session").status(403);
-    if (!authHeader) return res.json("No token").status(403);
+    if (!authHeader) return res.json("No Token Received");
+
     try {
-        const verifToken = jwt.verify(authHeader, process.env.JWT_SECRET);
+        const verifToken = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
         if (verifToken)
             next();
         else
@@ -19,17 +18,21 @@ export const logged = (req, res, next) => {
 
 export const checkAdmin = (req, res, next) => {
   try {
+      console.log(req);
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     if (decoded.isAdmin === false) {
-      return res.status(401).json({
+      return res.json({
         message: 'You are not authorized to access this resource'
       });
     }
     req.user = decoded;
     next();
+
   } catch (error) {
-    return res.status(401).json({
+      console.log(error)
+    return res.json({
       message: 'Auth failed'
     });
   }
