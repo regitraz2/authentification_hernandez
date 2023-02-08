@@ -18,19 +18,19 @@ export const logged = (req, res, next) => {
 }
 
 export const checkAdmin = (req, res, next) => {
-    try {
-        const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'admin') {
-            return res.status(401).json({
-                message: 'You are not authorized to access this resource'
-            });
-        }
-        req.user = decoded;
-        next();
-    } catch (error) {
-        return res.status(401).json({
-            message: 'Auth failed'
-        });
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.isAdmin === false) {
+      return res.status(401).json({
+        message: 'You are not authorized to access this resource'
+      });
     }
-}
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Auth failed'
+    });
+  }
+};
