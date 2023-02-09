@@ -5,7 +5,7 @@ import {hashPassword, manipulateDate} from "../utils/utils.js";
 export async function getUser(req,res){
     const users = await UserModel.find({});
     if(!users){
-        return res.status(404).json({"message":"User not found"})
+        return res.status(404).json({"message":"Cet Utilisateur n'existe pas"});
     }
 
     return res.status(200).json(users);
@@ -14,7 +14,7 @@ export async function getUser(req,res){
 export async function getUserById(req,res){
     const user = await UserModel.findOne({_id:req.params.id});
     if(!user){
-        return res.status(404).json({"message":"User not found"})
+        return res.status(404).json({"message":"Cet Utilisateur n'existe pas"})
     }
 
     return res.status(200).json(user);
@@ -22,7 +22,7 @@ export async function getUserById(req,res){
 
 export async function updateUser(req,res){
     if (!req.authUser.isAdmin && req.authUser.email !== req.body.email)
-        return res.json({"message":"You are not admin"});
+        return res.json({"message":"Vous n'avez pas les droits pour modifier cet utilisateur"});
 
     let updateData = req.body;
     let result = null;
@@ -60,11 +60,11 @@ export async function randomUser(req, res){
 export async function deleteUser(req, res){
     console.log(req.params.id);
     await UserModel.deleteOne({ _id: req.params.id });
-    res.json({ message: "User deleted" });
+    res.json({ "message": "User supprimé" });
 }
 
 export async function addUser(req, res){
-    if (!req.authUser.isAdmin) return res.json({"message":"You are not admin"});
+    if (!req.authUser.isAdmin) return res.json({"message":"Vous n'avez pas les droits pour ajouter un utilisateur"});
 
     const result = await UserModel.insertMany(
         {
@@ -83,6 +83,6 @@ export async function addUser(req, res){
         });
 
     if (!result)
-        return res.status(500).send({"message" : "Error while registering"});
-    return res.status(200).json({"message" : "User created"});
+        return res.status(500).send({"message" : "Erreur lors de l'ajout de l'utilisateur"});
+    return res.status(200).json({"message" : "Utilisateur créer"});
 }

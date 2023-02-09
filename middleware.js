@@ -3,7 +3,7 @@ import {UserModel} from "./models/user.js";
 
 export const logged = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    if (!authHeader) return res.json("No Token Received");
+    if (!authHeader) return res.json("Vous n'êtes pas connecté");
 
     try {
         const verifToken = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
@@ -12,7 +12,7 @@ export const logged = async (req, res, next) => {
             next();
         }
         else
-            console.log("Token invalid")
+            console.log("Token invalide")
     }
     catch (err) {
         console.log(err)
@@ -23,7 +23,7 @@ export const checkAdmin = (req, res, next) => {
   try {
     if (req.authUser.isAdmin === false) {
       return res.json({
-        message: 'You are not authorized to access this resource'
+        message: 'Vous n\'avez pas les droits pour accéder à cette page',
       });
     }
 

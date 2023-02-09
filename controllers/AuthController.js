@@ -7,7 +7,7 @@ export async function login(req, res){
 
     const user = await UserModel.findOne({email: req.body.email });
     if(!user){
-        return res.status(404).send("Cet utilisateur n'existe pas");
+        return res.status(404).json({"message":"Cet utilisateur n'existe pas"});
     }
 
     if(await verifyPassword(req.body.password,user.password)){
@@ -20,7 +20,7 @@ export async function login(req, res){
         
         return res.json({token:req.session.token,user:user});
     }else{
-        return res.status(403).send("Mot de passe incorrect");
+        return res.status(403).json({"message":"Mot de passe incorrect"});
     }
 }
 export function logout(req, res){
