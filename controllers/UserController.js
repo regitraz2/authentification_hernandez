@@ -21,12 +21,14 @@ export async function getUserById(req,res){
 }
 
 export async function updateUser(req,res){
-    if (!req.authUser.isAdmin && req.authUser.email !== req.body.email) return res.json({"message":"You are not admin"});
+    if (!req.authUser.isAdmin && req.authUser.email !== req.body.email)
+        return res.json({"message":"You are not admin"});
 
     let updateData = req.body;
+    let result = null;
     // Mise à jour des informations de l'utilisateur en fonction de l'id
     if(req.body){
-        const result = await UserModel.updateOne({ _id: updateData._id }, { $set: {
+        result = await UserModel.updateOne({ _id: updateData._id }, { $set: {
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             email: req.body.email,
@@ -42,7 +44,7 @@ export async function updateUser(req,res){
         } });
     }
 
-    return res.status(200).json({"message" : "Update effectuée"});
+    return res.status(200).json({"message" : "Update effectuée", "user": result});
 }
 
 
@@ -56,6 +58,7 @@ export async function randomUser(req, res){
     return res.json(user[0]);
 }
 export async function deleteUser(req, res){
+    console.log(req.params.id);
     await UserModel.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted" });
 }
