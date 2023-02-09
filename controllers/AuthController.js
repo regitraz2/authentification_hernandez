@@ -7,7 +7,7 @@ export async function login(req, res){
 
     const user = await UserModel.findOne({email: req.body.email });
     if(!user){
-        return res.send("User not find")
+        return res.status(404).send("User not found")
     }
 
     if(await verifyPassword(req.body.password,user.password)){
@@ -20,7 +20,7 @@ export async function login(req, res){
         
         return res.json({token:req.session.token,user:user});
     }else{
-        return res.send("Password invalid");
+        return res.status(404).send("Password invalid");
     }
 }
 export function logout(req, res){
