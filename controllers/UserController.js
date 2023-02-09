@@ -44,7 +44,7 @@ export async function updateUser(req,res){
         } });
     }
 
-    return res.status(200).json({"message" : "Update effectuée", "user": result});
+    return res.status(200).json({"message" : "Update effectuée", "user": await UserModel.findOne({ _id: updateData._id })});
 }
 
 
