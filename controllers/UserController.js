@@ -28,7 +28,7 @@ export async function updateUser(req,res){
     let result = null;
     // Mise à jour des informations de l'utilisateur en fonction de l'id
     if(req.body){
-        result = await UserModel.updateOne({ _id: updateData._id }, { $set: {
+        const update = {
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             email: req.body.email,
@@ -39,9 +39,13 @@ export async function updateUser(req,res){
             phone: req.body.phone,
             photo: req.body.photo,
             birthdate: req.body.birthdate,
-            isAdmin:req.body.isAdmin,
-            // password: hashPassword(req.body.password)
-        } });
+            isAdmin: req.body.isAdmin
+          };
+        
+        if (req.body.password && req.body.password.trim().length > 0) {
+            update.password = hashPassword(req.body.password);
+        }
+        const result = await UserModel.updateOne({ _id: updateData._id }, { $set:update });
     }
 
     return res.status(200).json({"message" : "Update effectuée", "user": await UserModel.findOne({ _id: updateData._id })});
@@ -58,7 +62,6 @@ export async function randomUser(req, res){
     return res.json(user[0]);
 }
 export async function deleteUser(req, res){
-    console.log(req.params.id);
     await UserModel.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted" });
 }
@@ -84,5 +87,6 @@ export async function addUser(req, res){
 
     if (!result)
         return res.status(500).send({"message" : "Error while registering"});
+    
     return res.status(200).json({"message" : "User created"});
 }
